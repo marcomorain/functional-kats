@@ -3,4 +3,8 @@
             [functional-kats.luhn :as luhn]))
 
 (deftest it-works
-  (is (= 70 (luhn/checksum "49927398716"))))
+  (is (= [true false false true]
+         (map luhn/valid  ["49927398716"
+                           "49927398717"
+                           "1234567812345678"
+                           "1234567812345670"]))))
