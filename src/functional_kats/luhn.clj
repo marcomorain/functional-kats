@@ -2,12 +2,8 @@
 
 (defn- digit? [c] (Character/isDigit c))
 (defn- value [c] (Character/getNumericValue c))
-
 (defn- rule3 [digit]
-  (let [doubled (* 2 digit)]
-   (if (< 9 doubled)
-    (reduce + (map value (str doubled)))
-    doubled)))
+  (reduce + (map value (str (* 2 digit)))))
 
 (def digit-lookup
   "Compute a lookup-table for the possible
@@ -22,23 +18,22 @@
   test have numbers that pass the following test:
   1. Reverse the order of the digits in the number.
   2. Take the first, third, ... and every other odd digit in the reversed digits
-     and sum them to form the partial sum s1
+  and sum them to form the partial sum s1
   3. Taking the second, fourth ... and every other even digit in the reversed
-     digits:
-     1. Multiply each digit by two and sum the digits if the answer is greater
-        than nine to form partial sums for the even digits
-     2. Sum the partial sums of the even digits to form s2
-  4. If s1 + s2 ends in zero then the original number is in the form of a valid
-     credit card number as verified by the Luhn test."
+  digits:
+  - 1. Multiply each digit by two and sum the digits if the answer is greater
+  than nine to form partial sums for the even digits
+  - 2. Sum the partial sums of the even digits to form s2
+  - 4. If s1 + s2 ends in zero then the original number is in the form of a valid
+  credit card number as verified by the Luhn test."
   [numbers]
   {:pre [(string? numbers)
-         (every? digit? numbers)] }
+         (every? digit? numbers)]}
   (let [digits (reverse (map value numbers))
         odds (take-nth 2 digits)
         evens (take-nth 2 (rest digits))
-        partial-sums (map digit-lookup evens)
         s1 (reduce + odds)
-        s2 (reduce + partial-sums)]
-    (= 0 (mod (+ s1 s2) 10) )))
+        s2 (reduce + (map digit-lookup evens))]
+    (zero? (mod (+ s1 s2) 10))))
 
 
